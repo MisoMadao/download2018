@@ -1,0 +1,50 @@
+[
+  {
+    "_id": "2d4a7bb0-a5e5-11e8-8834-833a68de74d1",
+    "_type": "search",
+    "_source": {
+      "title": "songlyrics",
+      "description": "",
+      "hits": 0,
+      "columns": [
+        "index",
+        "song",
+        "artist",
+        "genre",
+        "lyrics"
+      ],
+      "sort": [
+        "@timestamp",
+        "desc"
+      ],
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"480cb900-a5e4-11e8-8834-833a68de74d1\",\"highlightAll\":true,\"version\":true,\"query\":{\"language\":\"lucene\",\"query\":\"*\"},\"filter\":[]}"
+      }
+    }
+  },
+  {
+    "_id": "ff7d86d0-a6b8-11e8-8f09-3dcabdffd4c9",
+    "_type": "search",
+    "_source": {
+      "title": "mySongs",
+      "description": "",
+      "hits": 0,
+      "columns": [
+        "index",
+        "song",
+        "artist",
+        "genre",
+        "lyrics"
+      ],
+      "sort": [
+        "@timestamp",
+        "desc"
+      ],
+      "version": 1,
+      "kibanaSavedObjectMeta": {
+        "searchSourceJSON": "{\"index\":\"edda2550-a6b8-11e8-8f09-3dcabdffd4c9\",\"highlightAll\":true,\"version\":true,\"query\":{\"language\":\"lucene\",\"query\":\"*\"},\"filter\":[]}"
+      }
+    }
+  }
+]

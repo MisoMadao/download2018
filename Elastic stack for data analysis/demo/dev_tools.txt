@@ -1,0 +1,119 @@
+POST bilancio/bilancio
+{"direzione":"entrata","importo":1665,"motivo":"stipendio","chi":["sorint"],"data":"2018-08-10T00:00:00","note":""}
+
+POST bilancio/bilancio/AWULQSDmagztMSWpuDsi/_update
+{"doc":{"importo":-500}}
+
+# GET LIST OF INDICES
+GET _cat/indices?v
+
+# GET CLUSTER HEALTH
+GET _cat/health?v
+
+# SET 0 REPLICAS
+PUT logstash-songlyrics/_settings
+{"index":{"number_of_replicas":0}}
+
+# SEARCH FOR A WORD IN LYRICS
+GET logstash-songlyrics/_search
+{"query":{"term":{"lyrics":{"value":"love"}}}}
+
+# SEARCH FOR A WORD IN LYRICS.keyword
+GET logstash-songlyrics/_search
+{"query":{"term":{"lyrics.keyword":{"value":"love"}}}}
+
+# SEARCH FOR A WORD IN LYRICS BEFORE 2000
+GET logstash-songlyrics/_search
+{"query":{"bool":{"must":[{"term":{"lyrics":{"value":"love"}}},{"range":{"@timestamp":{"lt":"2000","format":"yyyy","time_zone":"+01:00"}}}]}}}
+
+# NUMBER OF SONGS PER YEAR
+GET logstash-songlyrics/_search
+{"size":0,"aggs":{"year":{"date_histogram":{"field":"@timestamp","interval":"year"}}},"query":{"range":{"@timestamp":{"gt":1990,"lt":2000,"format":"yyyy","time_zone":"+01:00"}}}}
+
+# TOP WORDS IN LYRICS
+GET logstash-songlyrics/_search
+{"size":0,"aggs":{"lyrics":{"terms":{"field":"lyrics","size":30}}}}
+
+# TOP WORDS IN LYRICS.keyword
+GET logstash-songlyrics/_search
+{"size":0,"aggs":{"lyrics":{"terms":{"field":"lyrics.keyword","size":30}}}}
+
+# TOP ARTISTS
+GET logstash-songlyrics/_search
+{"size":0,"aggs":{"lyrics":{"terms":{"field":"artist.keyword"}}}}
+
+# SEE INDEX MAPPING
+GET logstash-songlyrics/_mapping
+
+# ENABLE FIELDDATA IN LYRICS
+PUT logstash-songlyrics/_mapping/doc
+{"properties":{"lyrics":{"type":"text","fielddata":true,"norms":false,"fields":{"keyword":{"type":"keyword","ignore_above":256}}}}}
+
+# DISABLE FIELDDATA IN LYRICS
+PUT logstash-songlyrics/_mapping/doc
+{"properties":{"lyrics":{"type":"text","fielddata":false,"norms":false,"fields":{"keyword":{"type":"keyword","ignore_above":256}}}}}
+
+# SEE LIST OF TEMPLATES
+GET _cat/templates?v
+
+# SEE LOGSTASH TEMPLATE
+GET _template/logstash
+
+# TEST AN ANLYZER
+POST _analyze
+{"analyzer":"whitespace","text":"Finished with my woman 'cause she couldn't help me with my mind"}
+
+# TEST DEFAULT ANLYZER
+POST _analyze
+{"analyzer":"default","text":"Finished with my woman 'cause she couldn't help me with my mind"}
+
+# CREATE INDEX WITH NEW ANALYZER
+PUT logstash-songlyrics-new
+{"settings":{"index":{"number_of_replicas":0},"analysis":{"analyzer":{"std_english":{"type":"standard","stopwords":"_english_"}}}},"mappings":{"doc":{"properties":{"lyrics":{"analyzer":"std_english","type":"text","fielddata":true,"norms":false,"fields":{"keyword":{"type":"keyword","ignore_above":256}}}}}}}
+
+# TEST NEW INDEX
+POST logstash-songlyrics-new/_analyze
+{"analyzer":"std_english","text":"Finished with my woman 'cause she couldn't help me with my mind"}
+
+# REINDEX DATA IN NEW INDEX
+POST _reindex
+{"source":{"index":"logstash-songlyrics"},"dest":{"index":"logstash-songlyrics-new"}}
+
+# TOP WORDS IN LYRICS (new)
+GET logstash-songlyrics-new/_search
+{"size":0,"aggs":{"lyrics":{"terms":{"field":"lyrics","size":30}}}}
+
+# CREATE INDEX WITH CUSTOM STOPWORDS
+PUT logstash-songlyrics-custom
+{"settings":{"index":{"number_of_replicas":0},"analysis":{"analyzer":{"my_english":{"type":"standard","stopwords":["a","an","and","are","as","at","be","but","by","for","if","in","into","is","it","no","not","of","on","or","such","that","the","their","then","there","these","they","this","to","was","will","with","i","you","me","my","all","your","so","i'm","don't","it's","we"]}}}},"mappings":{"doc":{"properties":{"lyrics":{"analyzer":"my_english","type":"text","fielddata":true,"norms":false,"fields":{"keyword":{"type":"keyword","ignore_above":256}}}}}}}
+
+# REINDEX DATA IN CUSTOM INDEX
+POST _reindex
+{"source":{"index":"logstash-songlyrics"},"dest":{"index":"logstash-songlyrics-custom"}}
+
+# TOP WORDS IN LYRICS (custom)
+GET logstash-songlyrics-custome/_search
+{"size":0,"aggs":{"lyrics":{"terms":{"field":"lyrics","size":30}}}}
+
+# ADD ALIAS
+POST /_aliases
+{"actions":[{"add":{"index":"logstash-songlyrics-custom","alias":"mysongs"}}]}
+
+# SEE ALIASES
+GET _alias
+
+# REMOVE ALIAS
+POST /_aliases
+{"actions":[{"remove":{"index":"logstash-songlyrics-new","alias":"mysongs"}}]}
+
+# Top words in Rock or Pop after 2000, for genre
+GET mysongs/_search
+{"size":0,"aggs":{"genre":{"terms":{"field":"genre.keyword","size":10},"aggs":{"words":{"terms":{"field":"lyrics","size":10}}}}},"query":{"bool":{"must":[{"range":{"@timestamp":{"gte":"2000","format":"yyyy","time_zone":"+01:00"}}},{"bool":{"should":[{"term":{"genre":{"value":"rock"}}},{"term":{"genre":{"value":"pop"}}}],"minimum_should_match":1}}]}}}
+
+# Top 5 words for top 5 artist, for top 5 genres, before 2000, excluding pop and *love* word in lyrics
+GET mysongs/_search
+{"size":0,"aggs":{"top 5 genres":{"terms":{"field":"genre.keyword","size":5},"aggs":{"top 5 artists":{"terms":{"field":"artist.keyword","size":5},"aggs":{"top 5 words":{"terms":{"field":"lyrics","size":5}}}}}}},"query":{"bool":{"must":[{"range":{"@timestamp":{"gte":2000,"format":"yyyy","time_zone":"+01:00"}}}],"must_not":[{"term":{"lyrics":{"value":"love"}}}]}}}
+
+# number of songs per top 10 artists per decade, from 1970, which aren't pop singers, doesn't mention love in the songs and doesn't have "the" in their name
+GET mysongs/_search
+{"size":0,"aggs":{"decade":{"date_histogram":{"field":"@timestamp","interval":"3650d"},"aggs":{"top 5 artists":{"terms":{"field":"artist.keyword","size":10}}}}},"query":{"bool":{"must":[{"range":{"@timestamp":{"gte":1970,"format":"yyyy","time_zone":"+01:00"}}}],"must_not":[{"bool":{"should":[{"term":{"genre":{"value":"pop"}}},{"term":{"lyrics":{"value":"love"}}},{"term":{"artist":{"value":"the"}}}],"minimum_should_match":3}}]}}}
