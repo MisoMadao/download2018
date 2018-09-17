@@ -10,7 +10,7 @@ Index patterns tell Kibana which Elasticsearch indices you want to explore. An i
 
 We can both define an index pattern for an index or an alias
 
-01
+![alt text](https://raw.githubusercontent.com/MisoMadao/download2018/master/Elastic%20stack%20for%20data%20analysis/imgs/elastic%2001.PNG)
 
 ## [Discover](https://www.elastic.co/guide/en/kibana/current/discover.html)
 
@@ -20,7 +20,7 @@ The use of the search bar at the top will be explained later.
 
 We can create a search on our index by adding the columns we like from the bar on the left side or from inside a document with the magnifier:
 
-02
+![alt text](https://raw.githubusercontent.com/MisoMadao/download2018/master/Elastic%20stack%20for%20data%20analysis/imgs/elastic%2002.PNG)
 
 ## [Visualize](https://www.elastic.co/guide/en/kibana/current/visualize.html)
 
@@ -31,7 +31,7 @@ You can create visualizations from a search saved from Discover or start with a 
 How to create a simple top artists visualization?
 Select the chart type you like the most (following a pie), slit by *terms* aggregation, select the *artists.keyword* field and then press the play button to se the result!
 
-03
+![alt text](https://raw.githubusercontent.com/MisoMadao/download2018/master/Elastic%20stack%20for%20data%20analysis/imgs/elastic%2003.PNG)
 
 The size parameter let's you decide how many buckets (you need top 10? top 20?) ot show, the more buckets you want, the more computation time will take to load your visualization.
 
@@ -42,7 +42,7 @@ This is because when you will have many visualizations, if the name does not tel
 
 How to do a visualization with more than one aggregation? While creating a visualization click on  "add sub-buckets" button
 
-04
+![alt text](https://raw.githubusercontent.com/MisoMadao/download2018/master/Elastic%20stack%20for%20data%20analysis/imgs/elastic%2004.PNG)
 
 All visualization differs on the kind of aggregations they offer and how many of them you can use.
 
@@ -57,11 +57,11 @@ A suggestion: adding also the search can be useful to see what documents are dis
 
 How to add the visualizations...
 
-05
+![alt text](https://raw.githubusercontent.com/MisoMadao/download2018/master/Elastic%20stack%20for%20data%20analysis/imgs/elastic%2005.PNG)
 
 And the final dashboard...
 
-06
+![alt text](https://raw.githubusercontent.com/MisoMadao/download2018/master/Elastic%20stack%20for%20data%20analysis/imgs/elastic%2006.PNG)
 
 ## Search
 
@@ -70,11 +70,11 @@ Successive filters will be added to this, the resulting dashboard is the sum of 
 
 To get insights on the queries used for the visualizations, click on the arrow button under a visualization: here you can see not only the Elasticsearch query but also the response and the performance of the query. You can detect slower visualizations and tune or get your dashboard rid of them.
 
-07
+![alt text](https://raw.githubusercontent.com/MisoMadao/download2018/master/Elastic%20stack%20for%20data%20analysis/imgs/elastic%2007.PNG)
 
 You can also see, and modify, the DSL query used in filters. Here you can put also very complex queries.
 
-08
+![alt text](https://raw.githubusercontent.com/MisoMadao/download2018/master/Elastic%20stack%20for%20data%20analysis/imgs/elastic%2008.PNG)
 
 To search more accurately without having to write Elasticsearch queries, you can use the search bar at the top of the dashboard. This bar uses the [Lucene query syntax](https://www.elastic.co/guide/en/kibana/current/lucene-query.html).
 
@@ -86,7 +86,7 @@ To search for that artist you should type this:
 
     artist:"black sabbath"
 
-09
+![alt text](https://raw.githubusercontent.com/MisoMadao/download2018/master/Elastic%20stack%20for%20data%20analysis/imgs/elastic%2009.jpg)
 
 It supports also AND and OR boolean operators
 
